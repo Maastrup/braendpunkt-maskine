@@ -1,5 +1,5 @@
-int venstre = A1;
-int hojre = A0;
+int venstre = A0;
+int hojre = A1;
 
 int motorHojre = 6;
 int motorVenstre = 5;
@@ -7,7 +7,6 @@ int motorVenstre = 5;
 int motorOp = 10;
 int motorNed = 11;
 
-int powerPin = 3;
 
 void setup() {
   // Sensor setup
@@ -19,9 +18,6 @@ void setup() {
   pinMode(motorVenstre, OUTPUT);
   pinMode(motorOp, OUTPUT);
   pinMode(motorNed, OUTPUT);
-
-  pinMode(powerPin, OUTPUT);
-
   /*
   digitalWrite(motorOp, LOW);
   digitalWrite(motorNed, LOW);
@@ -37,31 +33,30 @@ void loop() {
 
   int dLight = ldrV - ldrH; 
 
+  int powerOut = map(absolut(dLight), 0, 200, 0, 512);
+  Serial.println("Diff: " + String(dLight));
+  Serial.println("Venstre: " + String(ldrV));
+  Serial.println("Hojre: " + String(ldrH));
   
   if (ldrV > ldrH) {
-    analogWrite(motorVenstre, abs(dLight));
+    analogWrite(motorVenstre, powerOut);
     digitalWrite(motorHojre, LOW);
     Serial.println("Drejer mod uret: LDR venstre = " + String(ldrV));
   } else if (ldrH > ldrV) {
-    analogWrite(motorHojre, abs(dLight));
+    analogWrite(motorHojre, powerOut);
     digitalWrite(motorVenstre, LOW);
     Serial.println("Drejer med uret: LDR hojre = " + String(ldrH));
   } else {
     Serial.println("Equalized light absorbsion");
   }
   
-  Serial.println("Power output = " + String(0.00488759f * dLight));
-  
+  Serial.println("Power output = " + String(powerOut));
+  delay(10);
+}
 
-  delay(500);
-  
-  digitalWrite(motorVenstre, LOW);
-  digitalWrite(motorHojre, LOW);
-
-  delay(3000);
-
-  /*
-  Serial.println("Venstre: " + String(analogRead(venstre)));
-  Serial.println("Højre: " + String(analogRead(hojre)));
-  */
+int absolut(int val){
+  if(val < 0){
+    val *= -1;
+  }
+  return val;
 }

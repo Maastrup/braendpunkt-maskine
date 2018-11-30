@@ -47,12 +47,14 @@ void loop() {
   int powerOut = map(absolut(dLys_vandret), 0, 200, 0, 512);
 
   if (vVal > hVal) {
+    // Hvis venstre sensors spændingsfald er højere end højre sensors
+    // 
     analogWrite(motorVenstre, powerOut);
-    digitalWrite(motorHojre, LOW);
+    analogWrite(motorHojre, LOW);
     Serial.println("Drejer mod uret: LDR venstre = " + String(vVal));
   } else if (hVal > vVal) {
     analogWrite(motorHojre, powerOut);
-    digitalWrite(motorVenstre, LOW);
+    analogWrite(motorVenstre, LOW);
     Serial.println("Drejer med uret: LDR hojre = " + String(hVal));
   } else {
     Serial.println("Equalized light absorbsion");
@@ -64,11 +66,11 @@ void loop() {
 
   if (opVal > nedVal) {
     analogWrite(motorOp, powerOut);
-    digitalWrite(motorNed, LOW);
+    analogWrite(motorNed, LOW);
     Serial.println("Forstørrer linse vinkel: LDR op = " + String(opVal));
   } else if (nedVal > opVal) {
     analogWrite(motorNed, powerOut);
-    digitalWrite(motorOp, LOW);
+    analogWrite(motorOp, LOW);
     Serial.println("Mindsker linse vinkel: LDR ned = " + String(nedVal));
   } else {
     Serial.println("Equalized light absorbsion");
@@ -79,9 +81,7 @@ void loop() {
   delay(10);
 }
 
-
-
-//tager absolut værdigen af et tal
+//tager absolut værdien af et tal
 int absolut(int val){
   if(val < 0){
     val *= -1;

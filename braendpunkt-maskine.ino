@@ -19,8 +19,10 @@ void setup() {
   pinMode(nedSens, INPUT);
 
   // Motor pin setup
+  // Vandret motor har gule ledninger på print
   pinMode(motorHojre, OUTPUT);
   pinMode(motorVenstre, OUTPUT);
+  // Vinkelmotor har orange ledninger på print
   pinMode(motorOp, OUTPUT);
   pinMode(motorNed, OUTPUT);
 
@@ -36,23 +38,21 @@ void loop() {
   int nedVal = analogRead(nedSens);
 
   //forskel på LDR
-  int dLys_vandret = vVal - hVal;
-  int dLys_lodret = opVal - nedVal;
-
-/*   Serial.println("Diff: " + String(dLys_vandret));
-  Serial.println("Venstre: " + String(vVal));
-  Serial.println("Hojre: " + String(hVal)); */
+  int dLys_vand = vVal - hVal;
+  int dLys_lod = opVal - nedVal;
   
   // Vandret korrektion
-  int powerOut = map(absolut(dLys_vandret), 0, 200, 0, 512);
+  Serial.println("!-----Vandret-----!");
+  int powerOut = map(absolut(dLys_vand), 0, 200, 512, 1023);
 
   if (vVal > hVal) {
     // Hvis venstre sensors spændingsfald er højere end højre sensors
-    // 
+    // Drej mod venstre
     analogWrite(motorVenstre, powerOut);
     analogWrite(motorHojre, LOW);
     Serial.println("Drejer mod uret: LDR venstre = " + String(vVal));
   } else if (hVal > vVal) {
+    // drej mod højre
     analogWrite(motorHojre, powerOut);
     analogWrite(motorVenstre, LOW);
     Serial.println("Drejer med uret: LDR hojre = " + String(hVal));
@@ -62,23 +62,29 @@ void loop() {
   Serial.println("Power output = " + String(powerOut));
 
   // Vinkel korrektion
-  powerOut =  map(absolut(dLys_lodret), 0, 200, 0, 1023);
+  Serial.println("!-----Vinkel-----!");
 
   if (opVal > nedVal) {
-    analogWrite(motorOp, powerOut);
+    // Hvis den øverste LDR har størst spændingsfald
+    // Så vip op
+    analogWrite(motorOp, 1023);
     analogWrite(motorNed, LOW);
-    Serial.println("Forstørrer linse vinkel: LDR op = " + String(opVal));
+    Serial.println("Forstørrer linsens vinkel: LDR op = " + String(opVal));
   } else if (nedVal > opVal) {
-    analogWrite(motorNed, powerOut);
+    // Vip op, hvis omvendt
+    analogWrite(motorNed, 1023);
     analogWrite(motorOp, LOW);
-    Serial.println("Mindsker linse vinkel: LDR ned = " + String(nedVal));
+    Serial.println("Mindsker linsens vinkel: LDR ned = " + String(nedVal));
   } else {
     Serial.println("Equalized light absorbsion");
   }
-  
-  Serial.println("Power output = " + String(powerOut));
-  
-  delay(10);
+}
+
+void stopMotors(){
+  analogWrite(motorNed, LOW);
+  analogWrite(motorOp, LOW);
+  analogWrite(motorVenstre, LOW);
+  analogWrite(motorHojre, LOW);
 }
 
 //tager absolut værdien af et tal

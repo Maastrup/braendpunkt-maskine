@@ -1,14 +1,14 @@
 // Definerer input pins til LDR sensorer
-#define venstreSens A0;
-#define hojreSens A1;
-#define opSens A2;
-#define nedSens A3;
+#define venstreSens A0
+#define hojreSens A1
+#define opSens A2
+#define nedSens A3
 
 // Definerer motor output pins til aktivering
-#define motorHojre 6;
-#define motorVenstre 5;
-#define motorOp 10;
-#define motorNed 11;
+#define motorHojre 6
+#define motorVenstre 5
+#define motorOp 10
+#define motorNed 11
 
 
 void setup() {
@@ -79,7 +79,9 @@ void loop() {
   delay(10);
 }
 
-//ændre val til positiv (hvis val er negativ)
+
+
+//tager absolut værdigen af et tal
 int absolut(int val){
   if(val < 0){
     val *= -1;
